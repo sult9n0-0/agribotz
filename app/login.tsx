@@ -1,77 +1,106 @@
-import React, { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-export default function AuthScreen() {
-  const [mode, setMode] = useState("login"); // "login" or "signup"
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+export default function Login() {
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const switchMode = () => {
-    setMode(mode === "login" ? "signup" : "login");
-  };
-
-  const handleSubmit = () => {
-    if (mode === "login") {
-      console.log("Logging in with", email, password);
-    } else {
-      if (password !== confirmPassword) {
-        console.log("Passwords do not match");
-        return;
-      }
-      console.log("Signing up with", email, password);
-    }
+  const handleLogin = () => {
+    // TODO: Add backend integration
+    console.log('Login pressed', { email, password });
+    // After login, navigate to main tabs
+    router.replace('/(tabs)');
   };
 
   return (
-    <View className="flex-1 justify-center items-center bg-white px-8">
-      <Text className="text-3xl font-bold mb-6 text-gray-800">
-        {mode === "login" ? "Login" : "Sign Up"}
-      </Text>
+    <View style={styles.container}>
+      {/* Back button */}
+      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <Text style={styles.backText}>← Back</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.title}>Login</Text>
 
       <TextInput
-        className="w-full border border-gray-300 rounded-2xl p-4 mb-4"
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
+        style={styles.input}
         keyboardType="email-address"
-        autoCapitalize="none"
+        placeholderTextColor="#1b3b1b"
       />
 
       <TextInput
-        className="w-full border border-gray-300 rounded-2xl p-4 mb-4"
         placeholder="Password"
-        secureTextEntry
         value={password}
         onChangeText={setPassword}
+        style={styles.input}
+        secureTextEntry
+        placeholderTextColor="#1b3b1b"
       />
 
-      {mode === "signup" && (
-        <TextInput
-          className="w-full border border-gray-300 rounded-2xl p-4 mb-4"
-          placeholder="Confirm Password"
-          secureTextEntry
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-        />
-      )}
-
-      <TouchableOpacity
-        onPress={handleSubmit}
-        className="w-full bg-blue-600 p-4 rounded-2xl mb-4"
-      >
-        <Text className="text-center text-white text-lg font-bold">
-          {mode === "login" ? "Login" : "Create Account"}
-        </Text>
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={switchMode}>
-        <Text className="text-blue-600 text-base">
-          {mode === "login"
-            ? "Don't have an account? Sign up"
-            : "Already have an account? Login"}
+      <TouchableOpacity onPress={() => router.push('/signup')}>
+        <Text style={styles.loginText}>
+          Don’t have an account? <Text style={styles.loginLink}>Sign Up</Text>
         </Text>
       </TouchableOpacity>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#e0f8e0', // light green
+    padding: 20,
+    justifyContent: 'center',
+  },
+  backButton: {
+    marginBottom: 15,
+  },
+  backText: {
+    color: '#2e7d32',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#2e7d32',
+    marginBottom: 40,
+    textAlign: 'center',
+  },
+  input: {
+    backgroundColor: '#a8e6a3',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
+    color: '#1b3b1b',
+  },
+  button: {
+    backgroundColor: '#2e7d32',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  loginText: {
+    textAlign: 'center',
+    color: '#1b3b1b',
+  },
+  loginLink: {
+    color: '#2e7d32',
+    fontWeight: 'bold',
+  },
+});
