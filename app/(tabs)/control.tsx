@@ -1,16 +1,40 @@
 import { Feather } from "@expo/vector-icons";
-import React from "react";
+import React, { useState } from "react"; // <-- added useState
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Svg, { Defs, Path, Pattern, Rect } from "react-native-svg";
 
 export default function ControlPanel() {
+  const [botOnline, setBotOnline] = useState(true); // track bot connectivity
+  const serverUrl = "http://192.168.137.143:5000/move"; // Python Flask server
+
   const handleMove = (direction: string) => {
     console.log("Move:", direction);
-    // TODO: Send move command to your bot
+
+    fetch(serverUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ command: direction }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Response:", data);
+        setBotOnline(true); // bot responded successfully
+      })
+      .catch((err) => {
+        console.error("Error:", err);
+        setBotOnline(false); // show offline popup
+      });
   };
 
   return (
     <View style={styles.card}>
+      {/* OFFLINE POPUP */}
+      {!botOnline && (
+        <View style={styles.offlineBanner}>
+          <Text style={styles.offlineText}>😞 Bot is offline</Text>
+        </View>
+      )}
+
       {/* Camera Feed Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Live Camera Feed</Text>
@@ -84,9 +108,17 @@ export default function ControlPanel() {
         {/* Down Arrow */}
         <TouchableOpacity
           style={styles.button}
-          onPress={() => handleMove("backward")}
+          onPress={() => handleMove("back")}
         >
           <Feather name="arrow-down" size={32} color="#fff" />
+        </TouchableOpacity>
+
+        {/* Stop Button */}
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: "#ef4444" }]}
+          onPress={() => handleMove("stop")}
+        >
+          <Text style={{ color: "#fff", fontWeight: "700" }}>STOP</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -174,4 +206,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 8,
   },
+
+  // OFFLINE POPUP
+  offlineBanner: {
+    backgroundColor: "#ef4444",
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+    width: "100%",
+    alignItems: "center",
+  },
+  offlineText: { color: "#fff", fontWeight: "700" },
 });
