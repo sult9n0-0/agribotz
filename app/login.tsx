@@ -11,7 +11,8 @@ export default function Login() {
     // TODO: Add backend integration
     console.log('Login pressed', { email, password });
     // After login, navigate to main tabs
-    router.replace('/(tabs)');
+    router.replace('/(tabs)/dashboard');
+
   };
 
   return (
