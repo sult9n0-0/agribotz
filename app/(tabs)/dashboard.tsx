@@ -31,7 +31,14 @@ export default function Dashboard() {
     <ScrollView className="flex-1 bg-green-50 p-4">
       <View className="flex-row space-x-4 mb-4">
         <WaterLevel waterLevel={sensorData.waterLevel} />
-        <BotStatus {...({ isActive, battery: sensorData.battery, lastUpdated: currentTime } as any)} />
+        <BotStatus
+          isActive={isActive}
+          temperature={25}
+          uptime="2h"
+          connectionQuality={90}
+          batteryPercentage={sensorData.battery}
+        />
+
       </View>
     </ScrollView>
   );
